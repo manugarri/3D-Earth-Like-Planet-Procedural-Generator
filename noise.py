@@ -1,16 +1,18 @@
+from numba import jit
 import numpy as np
 
 from geometry import dot
 
-
+@jit(forceobj=True)
 def fract(x):
     return x - np.floor(x)
 
-
+@jit(forceobj=True)
 def hash(x, y=0, z=0):
     return hash13(fract(x * .1031), fract(y * .1031), fract(z * .1031))
 
 
+@jit(forceobj=True)
 def hash13(p3x, p3y, p3z):
     s = p3x * (p3y + 19.19) + p3y * (p3z + 19.19) + p3z * (p3x + 19.19)
     p3x = p3x + s
@@ -18,13 +20,13 @@ def hash13(p3x, p3y, p3z):
     p3z = p3z + s
     return fract((p3x + p3y) * p3z)
 
-
+@jit(forceobj=True)
 def polynom_interpol(x):
     x2 = x * x
     x4 = x2 * x2
     return 6 * x4 * x - 15 * x4 + 10 * x2 * x
 
-
+@jit(forceobj=True)
 def noise3D(x, y, z, seed=42):
     u = hash(seed)
     x = x + u * 1431.26742
@@ -67,7 +69,7 @@ def noise3D(x, y, z, seed=42):
 
     return c
 
-
+@jit(forceobj=True)
 def perlin3D(x, y, z, octave=7, persistance=0.5, seed=42):
     p = 1
     totp = 0
@@ -85,7 +87,7 @@ def perlin3D(x, y, z, octave=7, persistance=0.5, seed=42):
 
     return tot / totp
 
-
+@jit(forceobj=True)
 def double_perlin3D(x, y, z, a=4, d=2, octave=8, persistance=0.6, seed=42):
     dx = perlin3D(x, y, z, 5, 0.5, seed * hash(seed, 0, 10))
     dy = perlin3D(x, y, z, 5, 0.5, seed * hash(seed, 10, 0))
@@ -97,7 +99,7 @@ def double_perlin3D(x, y, z, a=4, d=2, octave=8, persistance=0.6, seed=42):
 
     return P
 
-
+@jit(forceobj=True)
 def field(x, y, z, t):
     strength = 7. + .03 * np.log(1.e-6 + fract(np.sin(t) * 4373.11))
     accum = 0
@@ -115,7 +117,7 @@ def field(x, y, z, t):
 
     return np.maximum(0., 5. * accum / tw - .7)
 
-
+@jit(forceobj=True)
 def background(x, y, t=437.2):
     zeros = np.zeros_like(x)
     p = np.array([x / 4 + 2, y / 4 - 1.3, -1 + zeros])

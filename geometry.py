@@ -1,37 +1,36 @@
 import numpy as np
+from numba import jit
 
 
+@jit(forceobj=True)
 def dot(a, b):
     x1, y1, z1 = a
     x2, y2, z2 = b
     return x1 * x2 + y1 * y2 + z1 * z2
 
-
+@jit(forceobj=True)
 def cos_vec(a, b):
     return dot(a, b) / np.sqrt(dot(a, a) * dot(b, b))
 
-
+@jit(forceobj=True)
 def cross(a, b):
     x1, y1, z1 = a
     x2, y2, z2 = b
     return (y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2)
 
-
+@jit(forceobj=True)
 def reflection(d, n):
     xd, yd, zd = d
     xn, yn, zn = n
-
     u = dot(d, n) / dot(n, n)
-
     return (xd - 2*u*xn, yd - 2*u*yn, zd-2*u*zn)
 
-
+@jit(forceobj=True)
 def normal(x, y, z, h, dx, dy, dz, A=0.01):
     '''
-x = R cos phi cos theta
-y = R sin phi cos theta
-z = R sin theta
-
+    x = R cos phi cos theta
+    y = R sin phi cos theta
+    z = R sin theta
     '''
 
     R = np.sqrt(x * x + y * y + z * z)

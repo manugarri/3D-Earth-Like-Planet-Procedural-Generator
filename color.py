@@ -1,3 +1,4 @@
+from numba import jit
 import numpy as np
 
 biome_deep_water = {
@@ -272,6 +273,7 @@ T_eq = 30
 T_pole = -40
 
 
+@jit(forceobj=True)
 def humidity(theta):
     theta_deg = 90 * theta / (np.pi / 2)
 
@@ -282,6 +284,7 @@ def humidity(theta):
     return 4 * (c1 + c2 + c3 - 0.5) / 4.692
 
 
+@jit(forceobj=True)
 def colorize(x, y, z, c, vT, vH):
     A = np.zeros_like(c)
     A[c > 0.5] = ((c[c > 0.5] - 0.5) / 0.5) * 8000  # land
@@ -292,7 +295,7 @@ def colorize(x, y, z, c, vT, vH):
     T = T_pole + np.cos(theta) * (T_eq - T_pole) + (vT - 0.5) * 20
     T[c > 0.5] -= 7 * A[c > 0.5] / 1000
 
-    H = humidity(theta) * (1 + (vH - 0.5) )
+    H = humidity(theta) * (1 + (vH - 0.5))
 
     rgbref = np.zeros((len(c), 4))
     pond_tot = np.zeros_like(c)
